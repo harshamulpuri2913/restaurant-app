@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 139, 69, 19;
+  --background-start-rgb: 92, 46, 10;
+  --background-end-rgb: 139, 69, 19;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+  min-height: 100vh;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .traditional-border {
+    border: 3px solid #D4AF37;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+  }
+  
+  .golden-text {
+    color: #D4AF37;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+  
+  .textured-bg {
+    background-image: 
+      repeating-linear-gradient(
+        45deg,
+        rgba(139, 69, 19, 0.1),
+        rgba(139, 69, 19, 0.1) 10px,
+        rgba(92, 46, 10, 0.1) 10px,
+        rgba(92, 46, 10, 0.1) 20px
+      );
+  }
+}
+

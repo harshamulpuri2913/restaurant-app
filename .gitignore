@@ -1,0 +1,90 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+/dist
+
+# misc
+.DS_Store
+*.pem
+*.log
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# local env files - CRITICAL: Never commit these!
+.env
+.env*.local
+.env.development
+.env.production
+.env.test
+.env.staging
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# prisma
+/prisma/migrations
+/prisma/*.db
+/prisma/*.db-journal
+
+# uploads and user-generated content
+/public/uploads/**
+!/public/uploads/.gitkeep
+!/public/uploads/products/.gitkeep
+
+# backup files
+*.backup
+*.backup*
+*.bak
+*.old
+*.broken
+
+# Sensitive documentation (should not be public)
+ADMIN_CREDENTIALS.md
+
+# Page backups
+**/*.backup
+**/*.backup2
+**/*.broken
+
+# OS files
+Thumbs.db
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+

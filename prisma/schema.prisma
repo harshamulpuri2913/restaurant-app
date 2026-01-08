@@ -1,0 +1,123 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                      String    @id @default(cuid())
+  email                   String    @unique
+  name                    String?
+  password                String?   // Optional for OAuth users
+  phone                   String?
+  role                    String    @default("customer") // customer, admin
+  emailVerified           Boolean   @default(false)
+  verificationToken       String?   @unique
+  verificationTokenExpiry DateTime?
+  resetPasswordToken      String?   @unique
+  resetPasswordTokenExpiry DateTime?
+  image                   String?   // For OAuth profile picture
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+  orders                  Order[]
+
+  @@index([verificationToken])
+  @@index([resetPasswordToken])
+}
+
+model Order {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  items         OrderItem[]
+  totalAmount   Float
+  status        String    @default("pending") // pending, processing, completed, cancelled
+  paymentStatus String    @default("payment_pending") // payment_pending, payment_completed
+  location      String?   // "Folsom" or "Mountain House"
+  pickupDate    DateTime? // User-selected pickup date
+  whatsappSent  Boolean   @default(false)
+  customerName  String?
+  customerPhone String?
+  customerEmail String?
+  adminTimeline String?   // Admin-set completion timeline
+  adminNotes    String?   // Admin notes
+  paymentReceivedDate DateTime? // Date when payment was received
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([paymentStatus])
+  @@index([createdAt])
+  @@index([pickupDate])
+}
+
+model OrderItem {
+  id          String  @id @default(cuid())
+  orderId     String
+  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product @relation(fields: [productId], references: [id])
+  quantity    Int
+  price       Float
+  subtotal    Float
+  selectedSize String? // "250gm", "500gm", "1kg", or null for non-variant items
+  specialInstructions String? // Customer's special instructions for this item
+
+  @@index([orderId])
+}
+
+model Product {
+  id          String      @id @default(cuid())
+  name        String
+  description String?
+  category    String      // snacks, sweets, pickles, mandi, biryani
+  price       Float       // Base price (used if variants not set)
+  unit        String      // "250g", "Each"
+  image       String?
+  isAvailable Boolean     @default(true)
+  isHidden    Boolean     @default(false)
+  preOrderOnly Boolean    @default(false)
+  spending    Float?      // Admin-entered spending per unit (for non-variant products)
+  spendingVariants Json?  // Spending per size variant: { "250gm": 2.00, "500gm": 4.00, "1kg": 8.00 }
+  variants    Json?       // For snacks: { "250gm": 5.00, "500gm": 9.00, "1kg": 17.00 }
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  orderItems  OrderItem[]
+
+  @@index([category])
+  @@index([isAvailable])
+  @@index([isHidden])
+}
+
+model InvestedItemCategory {
+  id              String    @id @default(cuid())
+  name            String
+  description     String?
+  parentCategoryId String?  // null for main categories, ID for subcategories
+  parentCategory  InvestedItemCategory? @relation("CategoryHierarchy", fields: [parentCategoryId], references: [id], onDelete: Cascade)
+  subCategories   InvestedItemCategory[] @relation("CategoryHierarchy")
+  items           InvestedItem[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([parentCategoryId])
+}
+
+model InvestedItem {
+  id          String    @id @default(cuid())
+  categoryId  String
+  category    InvestedItemCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  name        String
+  customFields Json?    // Flexible JSON for custom fields: { "field1": "value1", "field2": 123, "field3": true }
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([categoryId])
+}
